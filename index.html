@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta http-equiv="X-UA-Compatible" content="IE-edge">
+            <meta name="viewport" content="width=device-width initial-scale=1.0">
+            <title>Job | Alpine</title>
+            <script defer src="https://unpkg.com/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+            <script defer src="https://unpkg.com/alpinejs@3.9.0/dist/cdn.min.js"></script>
+            <script src="https://cdn.tailwindcss.com"></script>
+        </head>
+        <body class="flex flex-col md:items-center min-h-screen p-4 md:p-8" x-data="{
+            jobList: $persist([]),
+            newJob: {
+                title: '',
+                type: 'Part-time',
+                location: 'Australia (On-campus)',
+                category: 'Engineering'
+            },
+            modelOpen: false,
+            editMode: false,
+            addJob(){
+                var id = this.jobList.length;
+                this.newJob.id = id += 1;
+                this.jobList.unshift(this.newJob);
+                this.openModel = false;
+            },
+            editJob(id){
+                this.editMode = true;
+                this.modelOpen = true;
+                this.newJob = this.jobList.find((item) => { return item.id == id });
+            },
+            updateJob(id){
+                var getJob = this.jobList.find((item) => { return item.id == id });
+                if(getJob){
+                    this.jobList.splice(this.jobList.indexOf(getJob), 1, this.newJob)
+                }
+                this.modelOpen = false;
+            },
+            removeJob(id) {
+                var find = this.jobList.find((item) => { return item.id == id });
+                if(find){ this.jobList.splice(this.jobList.indexOf(find), 1) }
+            } 
+        }">
+            <main class="relative w-full max-w-4xl bg-gradient-to-br from-blue-300 to-blue-50 flex-1 rounded flex flex-col overflow-hidden">
+                <h1 class="text-center py-4 text-3xl font-semibold text-slate-800">ALPINE JOB POSTING PORTAL</h1>
+                <section class="flex-1 mx-4 md:mx-8 mb-4 md:mb-8">
+                    <div class="border rounded flex flex-col">
+                        <div class="flex justify-between p-3">
+                            <h2 class="font-semibold text-lg">Job Postings</h2>
+                            <button class="bg-blue-700 text-sm text-white hover:bg-blue-800 px-2 py-1 rounded" @click="modelOpen = true">Create new job</button>
+                        </div>
+                        <ul>
+                            <template x-for="job in jobList">
+                                <li class="flex justify-between p-3 text-sm text-slate-700 border-t">
+                                    <div class="flex flex-col items-start gap-y-1">
+                                        <p class="font-semibold text-blue-700 h-5" x-text="job.title"></p>
+                                        <p class="flex items-end gap-2">
+                                            <img src="./assets/user-group.png" alt="user group" aria-label="user-group" class="w-4 h-4">
+                                            <span x-text="job.category"></span>
+                                        </p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <div class="flex flex-col items-end gap-y-1">
+                                            <span class="bg-green-300 px-1 text-green-900 font-semibold" x-text="job.type"></span>
+                                            <p class="flex gap-1">
+                                                <img src="./assets/pin.svg" alt="pin" aria-label="pin" class="w-3" >
+                                                <span x-text="job.location"></span>
+                                            </p>
+                                        </div>
+                                        <div class="flex flex-col justify-between">
+                                            <button class="px-1 text-green-500" @click="editJob(job.id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                                            </button>
+
+                                            <button class="px-1 text-red-600" @click="removeJob(job.id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </section>
+
+                <div class="absolute bottom-0 bg-gray-400 w-full px-4 md:px-8 py-2 text-center text-xs text-slate-900 border-t">
+                    Built with love by <a href="https://github.com/sharifbubuka" class="underline">Bubuka Sharif</a>
+                </div>
+
+                <template x-if="modelOpen">
+                    <div class="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+                            <!-- This element is to trick the browser into centering the modal contents. -->
+                            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                            <div class="inline-block align-bottom bg-white rounded text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full w-4/5">
+                                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 flex flex-col gap-2">
+                                    <h3 class="font-semibold text-lg" x-text="(editMode) ? 'Update Job Post' : 'Post New Job'"></h3>
+                                    <form class="w-full flex flex-col gap-4 text-sm">
+                                        <div class="flex flex-col gap-2">
+                                            <label for="title" class="font-semibold">Job title</label>
+                                            <input type="text" id="title" x-model="newJob.title" class="rounded border py-1 outline-none px-2" />
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label for="category" class="font-semibold">Category</label>
+                                            <select id="category" x-model="newJob.category" class="border outline-none py-1 rounded px-2">
+                                                <option value="Design" name="category">Design</option>
+                                                <option value="Engineering" name="category">Engineering</option>
+                                                <option value="Developer" name="category">Developer</option>
+                                                <option value="Manager" name="category">Manager</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label for="type" class="font-semibold">Type</label>
+                                            <select id="type" x-model="newJob.type" class="border outline-none py-1 rounded px-2">
+                                                <option value="Full-time" name="type">Full-time</option>
+                                                <option value="Part-time" name="type">Part-time</option>
+                                                <option value="Casual" name="type">Casual</option>
+                                                <option value="Freelance" name="type">Freelance</option>
+                                            </select>
+                                        </div>
+                                        <div class="flex flex-col gap-2">
+                                            <label for="location" class="font-semibold">Location</label>
+                                            <select id="location" x-model="newJob.location" class="border outline-none py-1 rounded px-2">
+                                                <option value="Australia (On-campus)" name="location">Australia (On-campus)</option>
+                                                <option value="Africa (Remote)" name="location">Africa (Remote)</option>
+                                                <option value="Europe (Remote)" name="location">Europe (Remote)</option>
+                                                <option value="America (Remote)" name="location">America (Remote)</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="flex justify-between px-4 md:px-6 py-2 pb-5">
+                                    <button class="hover:bg-red-700 border  text-sm hover:text-white hover:bg-blue-800 w-24 py-1 rounded" @click="modelOpen = false">Cancel</button>
+                                    
+                                    <template x-if="!editMode">
+                                        <button class="bg-blue-700 text-sm text-white hover:bg-blue-800 py-1 w-24 rounded" @click="jobList.unshift(newJob); modelOpen = false;">Post job</button>
+                                    </template>
+                                    
+                                    <template x-if="editMode">
+                                        <button class="bg-blue-700 text-sm text-white hover:bg-blue-800 py-1 w-24 rounded" @click="updateJob(newJob); modelOpen = false;">Edit job</button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </main>
+        </body>
+    </html>
+</html>
